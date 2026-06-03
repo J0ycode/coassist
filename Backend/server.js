@@ -3,15 +3,17 @@ const express = require('express')
 const mongoose = require('mongoose')
 const cors = require('cors')
 
-const healthRoutes = require('./routes/health')
+const healthRoutes  = require('./routes/health')
 const financeRoutes = require('./routes/finance')
+const authRoutes    = require('./routes/auth')
 
 const app = express()
 
 app.use(cors())
 app.use(express.json())
 
-app.use('/api/health', healthRoutes)
+app.use('/api/auth',    authRoutes)
+app.use('/api/health',  healthRoutes)
 app.use('/api/finance', financeRoutes)
 
 mongoose.connect(process.env.MONGO_URI)
@@ -24,3 +26,4 @@ mongoose.connect(process.env.MONGO_URI)
   .catch(err => {
     console.error('MongoDB connection error:', err)
   })
+
