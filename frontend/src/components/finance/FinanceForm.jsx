@@ -4,7 +4,7 @@ import axios from 'axios'
 
 const FinanceForm = ({ onTransactionAdded, onCancel }) => {
   const [formData, setFormData] = useState({
-    type: 'Expense',
+    type: 'expense',
     category: '',
     amount: '',
     description: '',
@@ -14,7 +14,7 @@ const FinanceForm = ({ onTransactionAdded, onCancel }) => {
 
   const incomeCategories = ['Salary', 'Freelance', 'Business', 'Investment', 'Other']
   const expenseCategories = ['Food', 'Medical', 'Transport', 'Shopping', 'Entertainment', 'Utilities', 'Other']
-  const categories = formData.type === 'Income' ? incomeCategories : expenseCategories
+  const categories = formData.type === 'income' ? incomeCategories : expenseCategories
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value })
@@ -30,7 +30,7 @@ const FinanceForm = ({ onTransactionAdded, onCancel }) => {
       await axios.post('/api/finance', formData)
       setSnackbar({ open: true, message: 'Transaction saved successfully!', severity: 'success' })
       setFormData({
-        type: 'Expense',
+        type: 'expense',
         category: '',
         amount: '',
         description: '',
@@ -59,8 +59,8 @@ const FinanceForm = ({ onTransactionAdded, onCancel }) => {
                 label="Type"
                 onChange={handleTypeChange}
               >
-                <MenuItem value="Income">Income</MenuItem>
-                <MenuItem value="Expense">Expense</MenuItem>
+                <MenuItem value="income">Income</MenuItem>
+                <MenuItem value="expense">Expense</MenuItem>
               </Select>
             </FormControl>
           </Grid>

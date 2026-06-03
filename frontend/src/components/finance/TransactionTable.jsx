@@ -4,7 +4,7 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
 import axios from 'axios'
 
 const TransactionTable = ({ transactions, onTransactionDeleted }) => {
-  const [filter, setFilter] = useState('All')
+  const [filter, setFilter] = useState('all')
 
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this transaction?')) {
@@ -18,7 +18,7 @@ const TransactionTable = ({ transactions, onTransactionDeleted }) => {
   }
 
   const filteredTransactions = transactions.filter(t => {
-    if (filter === 'All') return true
+    if (filter === 'all') return true
     return t.type === filter
   })
 
@@ -31,22 +31,22 @@ const TransactionTable = ({ transactions, onTransactionDeleted }) => {
         <Box sx={{ display: 'flex', gap: 1 }}>
           <Chip 
             label="All" 
-            color={filter === 'All' ? 'primary' : 'default'} 
-            onClick={() => setFilter('All')} 
+            color={filter === 'all' ? 'primary' : 'default'} 
+            onClick={() => setFilter('all')} 
             clickable 
             size="small" 
           />
           <Chip 
             label="Income" 
-            color={filter === 'Income' ? 'success' : 'default'} 
-            onClick={() => setFilter('Income')} 
+            color={filter === 'income' ? 'success' : 'default'} 
+            onClick={() => setFilter('income')} 
             clickable 
             size="small" 
           />
           <Chip 
             label="Expense" 
-            color={filter === 'Expense' ? 'error' : 'default'} 
-            onClick={() => setFilter('Expense')} 
+            color={filter === 'expense' ? 'error' : 'default'} 
+            onClick={() => setFilter('expense')} 
             clickable 
             size="small" 
           />
@@ -74,7 +74,7 @@ const TransactionTable = ({ transactions, onTransactionDeleted }) => {
               </TableRow>
             ) : (
               filteredTransactions.map((row, index) => {
-                const isIncome = row.type === 'Income'
+                const isIncome = row.type === 'income'
                 return (
                   <TableRow key={row._id} hover>
                     <TableCell>{index + 1}</TableCell>
