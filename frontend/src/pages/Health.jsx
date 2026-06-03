@@ -37,15 +37,21 @@ const Health = () => {
 
       <Collapse in={showForm}>
         <HealthForm 
-          onRecordAdded={() => {
-            fetchRecords()
+          onRecordAdded={(newRecord) => {
+            // Normalize nested bloodPressure to flat fields to match GET response shape
+            const normalized = {
+              ...newRecord,
+              systolic: newRecord.bloodPressure?.systolic ?? newRecord.systolic,
+              diastolic: newRecord.bloodPressure?.diastolic ?? newRecord.diastolic,
+            }
+            setRecords(prev => [normalized, ...prev])
             setShowForm(false)
           }} 
           onCancel={() => setShowForm(false)} 
         />
       </Collapse>
 
-      <HealthTable records={records} onRecordDeleted={fetchRecords} />
+      <HealthTable records={records} onRecordDeleted={(id) => setRecords(prev => prev.filter(r => r._id !== id))} />
     </Box>
   )
 }

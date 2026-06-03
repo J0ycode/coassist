@@ -19,10 +19,10 @@ const HealthForm = ({ onRecordAdded, onCancel }) => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      await axios.post('/api/health', formData)
+      const res = await axios.post('/api/health', formData)
       setSnackbar({ open: true, message: 'Record saved successfully!', severity: 'success' })
       setFormData({ systolic: '', diastolic: '', temperature: '', bloodOxygen: '', note: '' })
-      if (onRecordAdded) onRecordAdded()
+      if (onRecordAdded) onRecordAdded(res.data)
     } catch (error) {
       setSnackbar({ open: true, message: error.response?.data?.message || 'Error saving record', severity: 'error' })
     }

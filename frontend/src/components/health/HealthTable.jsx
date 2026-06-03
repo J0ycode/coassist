@@ -8,7 +8,7 @@ const HealthTable = ({ records, onRecordDeleted }) => {
     if (window.confirm('Are you sure you want to delete this record?')) {
       try {
         await axios.delete(`/api/health/${id}`)
-        if (onRecordDeleted) onRecordDeleted()
+        if (onRecordDeleted) onRecordDeleted(id)
       } catch (error) {
         console.error('Error deleting record', error)
       }
