@@ -7,7 +7,8 @@ import MainLayout from './components/layout/MainLayout'
 import Home from './pages/Home'
 import Health from './pages/Health'
 import Finance from './pages/Finance'
-import LoginPage from './pages/Login'
+import LoginPage    from './pages/Login'
+import RegisterPage from './pages/Register'
 
 function App() {
   return (
@@ -16,7 +17,8 @@ function App() {
       <AuthProvider>
         <Routes>
           {/* Public */}
-          <Route path="/login" element={<LoginPage />} />
+          <Route path="/login"    element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
 
           {/* Protected — wrapped in MainLayout */}
           <Route

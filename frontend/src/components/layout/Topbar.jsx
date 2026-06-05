@@ -1,12 +1,19 @@
-import { AppBar, Toolbar, Typography, IconButton, Avatar, Box } from '@mui/material'
-import { useLocation } from 'react-router-dom'
+import { AppBar, Toolbar, Typography, IconButton, Avatar, Box, Tooltip } from '@mui/material'
+import { useLocation, useNavigate } from 'react-router-dom'
 import SearchIcon from '@mui/icons-material/Search'
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone'
+import LogoutIcon from '@mui/icons-material/Logout'
 import { useAuth } from '../../context/AuthContext'
 
 const Topbar = () => {
-  const location    = useLocation()
-  const { user }    = useAuth()
+  const location          = useLocation()
+  const navigate          = useNavigate()
+  const { user, logout }  = useAuth()
+
+  const handleLogout = () => {
+    logout()
+    navigate('/login', { replace: true })
+  }
 
   const pageNames = {
     '/':        'Dashboard',
@@ -46,6 +53,21 @@ const Topbar = () => {
           }}>
             {initials}
           </Avatar>
+          {user && (
+            <Typography variant="body2" sx={{ ml: 0.5, color: 'text.secondary', display: { xs: 'none', sm: 'block' } }}>
+              {user.username}
+            </Typography>
+          )}
+          <Tooltip title="Logout">
+            <IconButton
+              id="logout-btn"
+              onClick={handleLogout}
+              size="small"
+              sx={{ ml: 0.5, color: 'text.secondary', '&:hover': { color: 'error.main' } }}
+            >
+              <LogoutIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
         </Box>
       </Toolbar>
     </AppBar>
