@@ -29,7 +29,7 @@ const theme = createTheme({
       styleOverrides: `
         html, body {
           background-color: #0f0c29 !important;
-          color: #ffffff !important;
+          color: #3b29c7ff !important;
           margin: 0;
           padding: 0;
         }

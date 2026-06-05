@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import {
   Box, List, ListItemButton, ListItemIcon, ListItemText,
   Typography, Avatar, IconButton, Tooltip, Divider,
@@ -10,10 +11,26 @@ import LogoutIcon from '@mui/icons-material/Logout'
 import { useAuth } from '../../context/AuthContext'
 import logo from '../../logo.png'
 
-const Sidebar = () => {
+const Sidebar = ({ onClose }) => {
   const location      = useLocation()
   const navigate      = useNavigate()
   const { user, logout } = useAuth()
+
+  const [time, setTime] = useState(new Date())
+
+  useEffect(() => {
+    const timer = setInterval(() => setTime(new Date()), 1000)
+    return () => clearInterval(timer)
+  }, [])
+
+  const formattedTime = time.toLocaleString('en-US', {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true
+  })
 
   const navItems = [
     { text: 'Dashboard', icon: <DashboardIcon />, path: '/' },
@@ -23,6 +40,7 @@ const Sidebar = () => {
 
   const handleLogout = () => {
     logout()
+    if (onClose) onClose()
     navigate('/login', { replace: true })
   }
 
@@ -35,22 +53,26 @@ const Sidebar = () => {
     <Box sx={{
       width: 260,
       height: '100vh',
-      position: 'fixed',
+      position: { xs: 'relative', md: 'fixed' },
       top: 0, left: 0,
       backgroundColor: 'rgba(255, 255, 255, 0.03)',
       backdropFilter: 'blur(20px)',
       borderRight: '1px solid rgba(255, 255, 255, 0.08)',
       display: 'flex',
       flexDirection: 'column',
+      zIndex: 1200,
     }}>
       {/* Logo */}
-      <Box sx={{ pt: 2, pb: 1.5, px: 3 }}>
+      <Box sx={{ pt: 2.5, pb: 1.5, px: 3 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
           <Box component="img" src={logo} sx={{ width: 32, height: 32, borderRadius: '8px', objectFit: 'cover' }} />
           <Typography variant="h6" sx={{ color: '#fff', fontWeight: 'bold', letterSpacing: '0.5px' }}>
             Coassist
           </Typography>
         </Box>
+        <Typography variant="caption" sx={{ display: 'block', mt: 1, color: 'rgba(255, 255, 255, 0.4)', fontSize: '0.75rem' }}>
+          {formattedTime}
+        </Typography>
       </Box>
 
       <Divider sx={{ borderColor: 'rgba(255, 255, 255, 0.08)' }} />
@@ -62,7 +84,10 @@ const Sidebar = () => {
           return (
             <ListItemButton
               key={item.text}
-              onClick={() => navigate(item.path)}
+              onClick={() => {
+                navigate(item.path)
+                if (onClose) onClose()
+              }}
               sx={{
                 borderRadius: 2, mb: 1,
                 backgroundColor: active ? 'rgba(255, 255, 255, 0.08)' : 'transparent',

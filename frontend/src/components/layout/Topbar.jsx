@@ -1,14 +1,33 @@
+import { useState, useEffect } from 'react'
 import { AppBar, Toolbar, Typography, IconButton, Avatar, Box, Tooltip } from '@mui/material'
 import { useLocation, useNavigate } from 'react-router-dom'
 import SearchIcon from '@mui/icons-material/Search'
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone'
 import LogoutIcon from '@mui/icons-material/Logout'
+import MenuIcon from '@mui/icons-material/Menu'
 import { useAuth } from '../../context/AuthContext'
 
-const Topbar = () => {
+const Topbar = ({ onDrawerToggle }) => {
   const location          = useLocation()
   const navigate          = useNavigate()
   const { user, logout }  = useAuth()
+
+  const [time, setTime] = useState(new Date())
+
+  useEffect(() => {
+    const timer = setInterval(() => setTime(new Date()), 1000)
+    return () => clearInterval(timer)
+  }, [])
+
+  const formattedTime = time.toLocaleString('en-US', {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: true
+  })
 
   const handleLogout = () => {
     logout()
@@ -29,22 +48,31 @@ const Topbar = () => {
   return (
     <AppBar
       position="sticky"
-      color="transparent"
+      color="inherit"
       elevation={0}
       sx={{
         borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
         backdropFilter: 'blur(20px)',
-        backgroundColor: 'rgba(15, 12, 41, 0.3)',
+        backgroundColor: '#121030',
       }}
     >
       <Toolbar sx={{ justifyContent: 'space-between' }}>
-        <Box>
-          <Typography variant="h6" fontWeight="bold" sx={{ color: '#fff' }}>{pageName}</Typography>
-          {user && (
-            <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.5)' }}>
-              Hello, {user.username} 👋
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            edge="start"
+            onClick={onDrawerToggle}
+            sx={{ mr: 1, display: { md: 'none' }, color: 'rgba(255, 255, 255, 0.7)' }}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Box>
+            <Typography variant="h6" fontWeight="bold" sx={{ color: '#fff', lineHeight: 1.2 }}>{pageName}</Typography>
+            <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.5)', display: 'block', fontSize: '0.75rem' }}>
+              {formattedTime}
             </Typography>
-          )}
+          </Box>
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <IconButton sx={{ color: 'rgba(255, 255, 255, 0.7)' }}><SearchIcon /></IconButton>
