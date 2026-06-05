@@ -96,4 +96,26 @@ router.get('/report', async (req, res) => {
   }
 })
 
+// PUT /:id — update a health record by id
+router.put('/:id', async (req, res) => {
+  try {
+    const { systolic, diastolic, temperature, bloodOxygen, note } = req.body
+    const updated = await HealthRecord.findOneAndUpdate(
+      { _id: req.params.id, user: req.user.id },
+      {
+        bloodPressure: { systolic, diastolic },
+        temperature,
+        bloodOxygen,
+        note
+      },
+      { new: true }
+    )
+    if (!updated) return res.status(404).json({ message: 'Record not found or unauthorized' })
+    res.json(updated)
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: err.message })
+  }
+})
+
 module.exports = router

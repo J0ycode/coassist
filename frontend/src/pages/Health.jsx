@@ -51,7 +51,11 @@ const Health = () => {
         />
       </Collapse>
 
-      <HealthTable records={records} onRecordDeleted={(id) => setRecords(prev => prev.filter(r => r._id !== id))} />
+      <HealthTable 
+        records={records} 
+        onRecordDeleted={(id) => setRecords(prev => prev.filter(r => r._id !== id))} 
+        onRecordUpdated={fetchRecords} 
+      />
     </Box>
   )
 }

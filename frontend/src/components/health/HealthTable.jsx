@@ -1,8 +1,53 @@
-import { Card, Typography, Box, Chip, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, IconButton } from '@mui/material'
+import { useState } from 'react'
+import { Card, Typography, Box, Chip, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Grid } from '@mui/material'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
 import axios from 'axios'
 
-const HealthTable = ({ records, onRecordDeleted }) => {
+const HealthTable = ({ records, onRecordDeleted, onRecordUpdated }) => {
+
+  const [open, setOpen] = useState(false)
+  const [editRecord, setEditRecord] = useState(null)
+  const [formData, setFormData] = useState({
+    systolic: '',
+    diastolic: '',
+    temperature: '',
+    bloodOxygen: '',
+    note: ''
+  })
+
+  const handleOpenEdit = (record) => {
+    setEditRecord(record)
+    setFormData({
+      systolic: record.systolic ?? record.bloodPressure?.systolic ?? '',
+      diastolic: record.diastolic ?? record.bloodPressure?.diastolic ?? '',
+      temperature: record.temperature ?? '',
+      bloodOxygen: record.bloodOxygen ?? '',
+      note: record.note ?? ''
+    })
+    setOpen(true)
+  }
+
+  const handleClose = () => {
+    setOpen(false)
+    setEditRecord(null)
+  }
+
+  const handleFormChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value })
+  }
+
+  const handleUpdate = async (e) => {
+    e.preventDefault()
+    try {
+      await axios.put(`/api/health/${editRecord._id}`, formData)
+      handleClose()
+      if (onRecordUpdated) onRecordUpdated()
+    } catch (error) {
+      console.error('Error updating record', error)
+      alert(error.response?.data?.message || 'Error updating record')
+    }
+  }
 
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this record?')) {
@@ -69,6 +114,9 @@ const HealthTable = ({ records, onRecordDeleted }) => {
                       {row.note || '-'}
                     </TableCell>
                     <TableCell align="right">
+                      <IconButton color="primary" onClick={() => handleOpenEdit(row)} sx={{ mr: 1 }}>
+                        <EditOutlinedIcon />
+                      </IconButton>
                       <IconButton color="error" onClick={() => handleDelete(row._id)}>
                         <DeleteOutlineIcon />
                       </IconButton>
@@ -80,6 +128,81 @@ const HealthTable = ({ records, onRecordDeleted }) => {
           </TableBody>
         </Table>
       </TableContainer>
+
+      {/* Edit Dialog */}
+      <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
+        <DialogTitle sx={{ fontWeight: 'bold' }}>Edit Health Record</DialogTitle>
+        <form onSubmit={handleUpdate}>
+          <DialogContent>
+            <Grid container spacing={2} sx={{ mt: 0.5 }}>
+              <Grid item xs={6}>
+                <TextField
+                  label="Systolic BP"
+                  name="systolic"
+                  type="number"
+                  fullWidth
+                  required
+                  value={formData.systolic}
+                  onChange={handleFormChange}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  label="Diastolic BP"
+                  name="diastolic"
+                  type="number"
+                  fullWidth
+                  required
+                  value={formData.diastolic}
+                  onChange={handleFormChange}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  label="Temperature (°C)"
+                  name="temperature"
+                  type="number"
+                  inputProps={{ step: "0.1" }}
+                  fullWidth
+                  required
+                  value={formData.temperature}
+                  onChange={handleFormChange}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  label="Blood Oxygen (SpO2 %)"
+                  name="bloodOxygen"
+                  type="number"
+                  fullWidth
+                  required
+                  value={formData.bloodOxygen}
+                  onChange={handleFormChange}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  label="Note"
+                  name="note"
+                  fullWidth
+                  multiline
+                  rows={3}
+                  value={formData.note}
+                  onChange={handleFormChange}
+                />
+              </Grid>
+            </Grid>
+          </DialogContent>
+          <DialogActions sx={{ px: 3, pb: 2.5 }}>
+            <Button onClick={handleClose} variant="outlined" color="inherit">
+              Cancel
+            </Button>
+            <Button type="submit" variant="contained" color="primary">
+              Save Changes
+            </Button>
+          </DialogActions>
+        </form>
+      </Dialog>
     </Card>
   )
 }

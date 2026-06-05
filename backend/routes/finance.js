@@ -80,4 +80,21 @@ router.get('/report', async (req, res) => {
   }
 })
 
+// PUT /:id — update a transaction by id
+router.put('/:id', async (req, res) => {
+  try {
+    const { type, category, amount, description } = req.body
+    const updated = await Transaction.findOneAndUpdate(
+      { _id: req.params.id, user: req.user.id },
+      { type, category, amount, description },
+      { new: true }
+    )
+    if (!updated) return res.status(404).json({ message: 'Transaction not found or unauthorized' })
+    res.json(updated)
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: err.message })
+  }
+})
+
 module.exports = router

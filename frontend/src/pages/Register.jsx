@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate, Link as RouterLink } from 'react-router-dom'
 import axios from 'axios'
+import logo from '../logo.png'
 import {
   Box, Card, Typography, TextField, Button,
   IconButton, InputAdornment, Alert, Divider, alpha, CircularProgress,
@@ -97,15 +98,12 @@ const RegisterPage = () => {
       }}>
         {/* logo */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 5 }}>
-          <Box sx={{
+          <Box component="img" src={logo} sx={{
             width: 52, height: 52, borderRadius: '14px',
-            background: 'linear-gradient(135deg, #ef5350, #5c6bc0)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}>
-            <Typography sx={{ fontSize: 26 }}>💊</Typography>
-          </Box>
-          <Typography variant="h5" fontWeight="bold" sx={{ color: '#fff' }}>
-            VitaLedger
+            objectFit: 'cover'
+          }} />
+          <Typography variant="h5" fontWeight="bold" sx={{ color: '#fff', letterSpacing: '0.5px' }}>
+            Coassist
           </Typography>
         </Box>
 
@@ -159,13 +157,10 @@ const RegisterPage = () => {
         }}>
           {/* header */}
           <Box sx={{ textAlign: 'center', mb: 3 }}>
-            <Box sx={{
+            <Box component="img" src={logo} sx={{
               width: 56, height: 56, borderRadius: '16px', mx: 'auto', mb: 2,
-              background: 'linear-gradient(135deg, #5c6bc0, #42a5f5)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}>
-              <Typography sx={{ fontSize: 26 }}>💊</Typography>
-            </Box>
+              objectFit: 'cover'
+            }} />
             <Typography variant="h5" fontWeight="bold" sx={{ color: '#fff' }}>
               Create account
             </Typography>

@@ -8,6 +8,7 @@ import FavoriteIcon from '@mui/icons-material/Favorite'
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet'
 import LogoutIcon from '@mui/icons-material/Logout'
 import { useAuth } from '../../context/AuthContext'
+import logo from '../../logo.png'
 
 const Sidebar = () => {
   const location      = useLocation()
@@ -43,10 +44,13 @@ const Sidebar = () => {
       flexDirection: 'column',
     }}>
       {/* Logo */}
-      <Box sx={{ pt: 2.5, pb: 2, px: 3 }}>
-        <Typography variant="h6" sx={{ color: '#fff', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1 }}>
-          💊 VitaLedger
-        </Typography>
+      <Box sx={{ pt: 2, pb: 1.5, px: 3 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+          <Box component="img" src={logo} sx={{ width: 32, height: 32, borderRadius: '8px', objectFit: 'cover' }} />
+          <Typography variant="h6" sx={{ color: '#fff', fontWeight: 'bold', letterSpacing: '0.5px' }}>
+            Coassist
+          </Typography>
+        </Box>
       </Box>
 
       <Divider sx={{ borderColor: 'rgba(255, 255, 255, 0.08)' }} />

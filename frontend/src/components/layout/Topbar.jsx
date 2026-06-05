@@ -20,7 +20,7 @@ const Topbar = () => {
     '/health':  'Health Tracker',
     '/finance': 'Expense Tracker',
   }
-  const pageName = pageNames[location.pathname] || 'VitaLedger'
+  const pageName = pageNames[location.pathname] || 'Coassist'
 
   const initials = user?.username
     ? user.username.slice(0, 2).toUpperCase()

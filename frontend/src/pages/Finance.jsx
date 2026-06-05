@@ -59,7 +59,11 @@ const Finance = () => {
               onCancel={() => setShowForm(false)} 
             />
           </Collapse>
-          <TransactionTable transactions={transactions} onTransactionDeleted={fetchTransactions} />
+          <TransactionTable 
+            transactions={transactions} 
+            onTransactionDeleted={fetchTransactions} 
+            onTransactionUpdated={fetchTransactions} 
+          />
         </Box>
       )}
 

@@ -1,2 +1,2 @@
-# vitaledger
-# vitaledger
+# Coassist
+Personal Health & Finance Companion
