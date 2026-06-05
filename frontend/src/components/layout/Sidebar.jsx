@@ -37,7 +37,7 @@ const Sidebar = () => {
       height: '100vh',
       position: 'fixed',
       top: 0, left: 0,
-      backgroundColor: 'rgba(255, 255, 255, 0.03)',
+      backgroundColor: '#121030',
       backdropFilter: 'blur(20px)',
       borderRight: '1px solid rgba(255, 255, 255, 0.08)',
       display: 'flex',

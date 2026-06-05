@@ -29,12 +29,12 @@ const Topbar = () => {
   return (
     <AppBar
       position="sticky"
-      color="transparent"
+      color="inherit"
       elevation={0}
       sx={{
         borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
         backdropFilter: 'blur(20px)',
-        backgroundColor: 'rgba(15, 12, 41, 0.3)',
+        backgroundColor: '#121030',
       }}
     >
       <Toolbar sx={{ justifyContent: 'space-between' }}>
