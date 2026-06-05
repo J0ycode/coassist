@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Grid, Card, Typography, Box, Chip, Divider, alpha } from '@mui/material'
+import { Grid, Card, Typography, Box, Chip, Divider, alpha, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel } from '@mui/material'
 import axios from 'axios'
 import FavoriteIcon from '@mui/icons-material/Favorite'
 import AirIcon from '@mui/icons-material/Air'
@@ -158,20 +158,43 @@ const DonutLegend = ({ data }) => (
 const Home = () => {
   const [healthData, setHealthData]   = useState([])
   const [financeData, setFinanceData] = useState({ summary: {}, expenseByCategory: {} })
+  const [transactions, setTransactions] = useState([])
+
+  // Sorting state for Health
+  const [healthSortField, setHealthSortField] = useState('date')
+  const [healthSortOrder, setHealthSortOrder] = useState('desc') // 'asc' | 'desc'
+
+  // Sorting state for Expense
+  const [expenseSortField, setExpenseSortField] = useState('date')
+  const [expenseSortOrder, setExpenseSortOrder] = useState('desc') // 'asc' | 'desc'
 
   useEffect(() => { fetchData() }, [])
 
   const fetchData = async () => {
     try {
-      const [healthRes, financeRes] = await Promise.all([
+      const [healthRes, financeRes, transRes] = await Promise.all([
         axios.get('/api/health'),
         axios.get('/api/finance/report'),
+        axios.get('/api/finance'),
       ])
       setHealthData(healthRes.data)
       setFinanceData(financeRes.data)
+      setTransactions(transRes.data)
     } catch (err) {
       console.error('Dashboard fetch error:', err)
     }
+  }
+
+  const handleHealthSort = (field) => {
+    const isAsc = healthSortField === field && healthSortOrder === 'asc'
+    setHealthSortOrder(isAsc ? 'desc' : 'asc')
+    setHealthSortField(field)
+  }
+
+  const handleExpenseSort = (field) => {
+    const isAsc = expenseSortField === field && expenseSortOrder === 'asc'
+    setExpenseSortOrder(isAsc ? 'desc' : 'asc')
+    setExpenseSortField(field)
   }
 
   /* ── derived data ── */
@@ -230,6 +253,65 @@ const Home = () => {
     { name: 'Expenses', value: totalExpenses, fill: '#ef5350' },
     { name: 'Balance',  value: Math.abs(netBalance), fill: netBalance >= 0 ? '#5c6bc0' : '#ab47bc' },
   ]
+
+  /* ── sorted health data ── */
+  const sortedHealthData = [...healthData].sort((a, b) => {
+    let valA, valB;
+    if (healthSortField === 'date') {
+      valA = new Date(a.date).getTime()
+      valB = new Date(b.date).getTime()
+    } else if (healthSortField === 'systolic') {
+      valA = a.bloodPressure?.systolic ?? a.systolic ?? 0
+      valB = b.bloodPressure?.systolic ?? b.systolic ?? 0
+    } else if (healthSortField === 'diastolic') {
+      valA = a.bloodPressure?.diastolic ?? a.diastolic ?? 0
+      valB = b.bloodPressure?.diastolic ?? b.diastolic ?? 0
+    } else if (healthSortField === 'bloodOxygen') {
+      valA = a.bloodOxygen ?? 0
+      valB = b.bloodOxygen ?? 0
+    } else if (healthSortField === 'temperature') {
+      valA = a.temperature ?? 0
+      valB = b.temperature ?? 0
+    } else {
+      valA = 0
+      valB = 0
+    }
+
+    if (healthSortOrder === 'asc') {
+      return valA > valB ? 1 : -1
+    } else {
+      return valA < valB ? 1 : -1
+    }
+  })
+
+  /* ── sorted expense data ── */
+  const expenseTransactions = transactions.filter(t => t.type === 'expense')
+
+  const sortedExpenseData = [...expenseTransactions].sort((a, b) => {
+    let valA, valB;
+    if (expenseSortField === 'date') {
+      valA = new Date(a.date).getTime()
+      valB = new Date(b.date).getTime()
+    } else if (expenseSortField === 'amount') {
+      valA = a.amount ?? 0
+      valB = b.amount ?? 0
+    } else if (expenseSortField === 'category') {
+      valA = (a.category ?? '').toLowerCase()
+      valB = (b.category ?? '').toLowerCase()
+    } else if (expenseSortField === 'description') {
+      valA = (a.description ?? '').toLowerCase()
+      valB = (b.description ?? '').toLowerCase()
+    } else {
+      valA = 0
+      valB = 0
+    }
+
+    if (expenseSortOrder === 'asc') {
+      return valA > valB ? 1 : -1
+    } else {
+      return valA < valB ? 1 : -1
+    }
+  })
 
   return (
     <Grid container spacing={3}>
@@ -479,6 +561,216 @@ const Home = () => {
               <Typography color="text.secondary">No health records found</Typography>
             </Box>
           )}
+        </Card>
+      </Grid>
+
+      {/* ══ Row 5 — Historical Logs & Comparison ═══════════════════ */}
+      <Grid item xs={12}>
+        <Card sx={{ p: 2.5 }}>
+          <SectionHeader title="Past Recordings & Comparison" sub="Sort and compare your health vitals & expense records side by side" />
+          <Divider sx={{ mb: 3, borderColor: 'rgba(255, 255, 255, 0.08)' }} />
+          
+          <Grid container spacing={4}>
+            {/* Left Column: Health Recordings */}
+            <Grid item xs={12} md={6}>
+              <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Typography variant="subtitle1" fontWeight="bold" sx={{ color: '#ef5350', display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <FavoriteIcon fontSize="small" /> Health Vitals Log
+                </Typography>
+                <Chip label={`${healthData.length} records`} size="small" sx={{ bgcolor: 'rgba(239,83,80,0.15)', color: '#fff', fontWeight: 600 }} />
+              </Box>
+              
+              <TableContainer sx={{ maxHeight: 350, border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: 2, bgcolor: 'rgba(255,255,255,0.01)' }}>
+                <Table stickyHeader size="small">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell sx={{ fontWeight: 'bold', color: 'rgba(255,255,255,0.9)', bgcolor: 'rgba(30, 30, 50, 0.95)' }}>
+                        <TableSortLabel
+                          active={healthSortField === 'date'}
+                          direction={healthSortField === 'date' ? healthSortOrder : 'asc'}
+                          onClick={() => handleHealthSort('date')}
+                          sx={{
+                            color: 'rgba(255,255,255,0.9) !important',
+                            '& .MuiTableSortLabel-icon': { color: '#42a5f5 !important' }
+                          }}
+                        >
+                          Date
+                        </TableSortLabel>
+                      </TableCell>
+                      <TableCell align="center" sx={{ fontWeight: 'bold', color: 'rgba(255,255,255,0.9)', bgcolor: 'rgba(30, 30, 50, 0.95)' }}>
+                        <TableSortLabel
+                          active={healthSortField === 'systolic'}
+                          direction={healthSortField === 'systolic' ? healthSortOrder : 'asc'}
+                          onClick={() => handleHealthSort('systolic')}
+                          sx={{
+                            color: 'rgba(255,255,255,0.9) !important',
+                            '& .MuiTableSortLabel-icon': { color: '#42a5f5 !important' }
+                          }}
+                        >
+                          BP
+                        </TableSortLabel>
+                      </TableCell>
+                      <TableCell align="center" sx={{ fontWeight: 'bold', color: 'rgba(255,255,255,0.9)', bgcolor: 'rgba(30, 30, 50, 0.95)' }}>
+                        <TableSortLabel
+                          active={healthSortField === 'bloodOxygen'}
+                          direction={healthSortField === 'bloodOxygen' ? healthSortOrder : 'asc'}
+                          onClick={() => handleHealthSort('bloodOxygen')}
+                          sx={{
+                            color: 'rgba(255,255,255,0.9) !important',
+                            '& .MuiTableSortLabel-icon': { color: '#42a5f5 !important' }
+                          }}
+                        >
+                          SpO2
+                        </TableSortLabel>
+                      </TableCell>
+                      <TableCell align="center" sx={{ fontWeight: 'bold', color: 'rgba(255,255,255,0.9)', bgcolor: 'rgba(30, 30, 50, 0.95)' }}>
+                        <TableSortLabel
+                          active={healthSortField === 'temperature'}
+                          direction={healthSortField === 'temperature' ? healthSortOrder : 'asc'}
+                          onClick={() => handleHealthSort('temperature')}
+                          sx={{
+                            color: 'rgba(255,255,255,0.9) !important',
+                            '& .MuiTableSortLabel-icon': { color: '#42a5f5 !important' }
+                          }}
+                        >
+                          Temp
+                        </TableSortLabel>
+                      </TableCell>
+                      <TableCell sx={{ fontWeight: 'bold', color: 'rgba(255,255,255,0.9)', bgcolor: 'rgba(30, 30, 50, 0.95)' }}>Note</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {sortedHealthData.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={5} align="center" sx={{ py: 4 }}>
+                          <Typography variant="body2" color="text.secondary">No health records yet</Typography>
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      sortedHealthData.map((row) => {
+                        const d = new Date(row.date)
+                        const formattedDate = `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')} ${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`
+                        const sys = row.bloodPressure?.systolic ?? row.systolic ?? 0
+                        const dia = row.bloodPressure?.diastolic ?? row.diastolic ?? 0
+                        return (
+                          <TableRow key={row._id} hover sx={{ '&:hover': { bgcolor: 'rgba(255,255,255,0.04) !important' } }}>
+                            <TableCell sx={{ fontSize: '0.8rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>{formattedDate}</TableCell>
+                            <TableCell align="center" sx={{ fontSize: '0.8rem', fontWeight: 600, borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                              {sys}/{dia}
+                            </TableCell>
+                            <TableCell align="center" sx={{ fontSize: '0.8rem', color: C.spO2, borderBottom: '1px solid rgba(255,255,255,0.05)' }}>{row.bloodOxygen}%</TableCell>
+                            <TableCell align="center" sx={{ fontSize: '0.8rem', color: C.temperature, borderBottom: '1px solid rgba(255,255,255,0.05)' }}>{row.temperature}°C</TableCell>
+                            <TableCell sx={{ fontSize: '0.8rem', maxWidth: 120, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                              {row.note || '-'}
+                            </TableCell>
+                          </TableRow>
+                        )
+                      })
+                    )}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Grid>
+
+            {/* Right Column: Expense Recordings */}
+            <Grid item xs={12} md={6}>
+              <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Typography variant="subtitle1" fontWeight="bold" sx={{ color: '#ffa726', display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <AccountBalanceWalletIcon fontSize="small" /> Expense Records Log
+                </Typography>
+                <Chip label={`${expenseTransactions.length} expenses`} size="small" sx={{ bgcolor: 'rgba(255,167,38,0.15)', color: '#fff', fontWeight: 600 }} />
+              </Box>
+
+              <TableContainer sx={{ maxHeight: 350, border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: 2, bgcolor: 'rgba(255,255,255,0.01)' }}>
+                <Table stickyHeader size="small">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell sx={{ fontWeight: 'bold', color: 'rgba(255,255,255,0.9)', bgcolor: 'rgba(30, 30, 50, 0.95)' }}>
+                        <TableSortLabel
+                          active={expenseSortField === 'date'}
+                          direction={expenseSortField === 'date' ? expenseSortOrder : 'asc'}
+                          onClick={() => handleExpenseSort('date')}
+                          sx={{
+                            color: 'rgba(255,255,255,0.9) !important',
+                            '& .MuiTableSortLabel-icon': { color: '#42a5f5 !important' }
+                          }}
+                        >
+                          Date
+                        </TableSortLabel>
+                      </TableCell>
+                      <TableCell align="right" sx={{ fontWeight: 'bold', color: 'rgba(255,255,255,0.9)', bgcolor: 'rgba(30, 30, 50, 0.95)' }}>
+                        <TableSortLabel
+                          active={expenseSortField === 'amount'}
+                          direction={expenseSortField === 'amount' ? expenseSortOrder : 'asc'}
+                          onClick={() => handleExpenseSort('amount')}
+                          sx={{
+                            color: 'rgba(255,255,255,0.9) !important',
+                            '& .MuiTableSortLabel-icon': { color: '#42a5f5 !important' }
+                          }}
+                        >
+                          Amount
+                        </TableSortLabel>
+                      </TableCell>
+                      <TableCell sx={{ fontWeight: 'bold', color: 'rgba(255,255,255,0.9)', bgcolor: 'rgba(30, 30, 50, 0.95)' }}>
+                        <TableSortLabel
+                          active={expenseSortField === 'category'}
+                          direction={expenseSortField === 'category' ? expenseSortOrder : 'asc'}
+                          onClick={() => handleExpenseSort('category')}
+                          sx={{
+                            color: 'rgba(255,255,255,0.9) !important',
+                            '& .MuiTableSortLabel-icon': { color: '#42a5f5 !important' }
+                          }}
+                        >
+                          Category
+                        </TableSortLabel>
+                      </TableCell>
+                      <TableCell sx={{ fontWeight: 'bold', color: 'rgba(255,255,255,0.9)', bgcolor: 'rgba(30, 30, 50, 0.95)' }}>
+                        <TableSortLabel
+                          active={expenseSortField === 'description'}
+                          direction={expenseSortField === 'description' ? expenseSortOrder : 'asc'}
+                          onClick={() => handleExpenseSort('description')}
+                          sx={{
+                            color: 'rgba(255,255,255,0.9) !important',
+                            '& .MuiTableSortLabel-icon': { color: '#42a5f5 !important' }
+                          }}
+                        >
+                          Description
+                        </TableSortLabel>
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {sortedExpenseData.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={4} align="center" sx={{ py: 4 }}>
+                          <Typography variant="body2" color="text.secondary">No expense transactions yet</Typography>
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      sortedExpenseData.map((row) => {
+                        const d = new Date(row.date)
+                        const formattedDate = `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')} ${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`
+                        return (
+                          <TableRow key={row._id} hover sx={{ '&:hover': { bgcolor: 'rgba(255,255,255,0.04) !important' } }}>
+                            <TableCell sx={{ fontSize: '0.8rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>{formattedDate}</TableCell>
+                            <TableCell align="right" sx={{ fontSize: '0.8rem', fontWeight: 600, color: C.expense, borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                              ₹{row.amount.toLocaleString()}
+                            </TableCell>
+                            <TableCell sx={{ fontSize: '0.8rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                              <Chip label={row.category} size="small" variant="outlined" sx={{ height: 20, fontSize: '0.7rem', borderColor: 'rgba(255,255,255,0.2)', color: 'rgba(255,255,255,0.8)' }} />
+                            </TableCell>
+                            <TableCell sx={{ fontSize: '0.8rem', maxWidth: 150, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                              {row.description || '-'}
+                            </TableCell>
+                          </TableRow>
+                        )
+                      })
+                    )}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Grid>
+          </Grid>
         </Card>
       </Grid>
 

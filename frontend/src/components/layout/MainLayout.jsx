@@ -42,7 +42,7 @@ const MainLayout = ({ children }) => {
       <Orb size={300} top="40%"   right={100}  color="#42a5f5" opacity={0.15} />
 
       {/* Sidebar for Desktop */}
-      <Box sx={{ display: { xs: 'none', md: 'block' }, width: drawerWidth, flexShrink: 0 }}>
+      <Box sx={{ display: { xs: 'none', md: 'block' } }}>
         <Sidebar />
       </Box>
 
