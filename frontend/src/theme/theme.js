@@ -2,11 +2,16 @@ import { createTheme } from '@mui/material/styles'
 
 const theme = createTheme({
   palette: {
+    mode: 'dark',
     primary: { main: '#5c6bc0' },
     secondary: { main: '#26c6da' },
     background: {
-      default: '#f4f6f8',
-      paper: '#ffffff',
+      default: '#0f0c29',
+      paper: 'rgba(255, 255, 255, 0.04)',
+    },
+    text: {
+      primary: '#ffffff',
+      secondary: 'rgba(255, 255, 255, 0.7)',
     },
     success: { main: '#66bb6a' },
     warning: { main: '#ffa726' },
@@ -17,14 +22,36 @@ const theme = createTheme({
     fontFamily: "'Inter', sans-serif",
   },
   shape: {
-    borderRadius: 12,
+    borderRadius: 16,
   },
   components: {
     MuiCard: {
       styleOverrides: {
         root: {
-          boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
-          borderRadius: 12,
+          backgroundColor: 'rgba(255, 255, 255, 0.04)',
+          backdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255, 255, 255, 0.08)',
+          boxShadow: '0 24px 80px rgba(0,0,0,0.3)',
+          borderRadius: 16,
+        },
+      },
+    },
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          backgroundColor: 'rgba(255, 255, 255, 0.04)',
+          backdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255, 255, 255, 0.08)',
+          borderRadius: 16,
+        },
+      },
+    },
+    MuiAppBar: {
+      styleOverrides: {
+        root: {
+          backgroundColor: 'transparent',
+          backdropFilter: 'blur(20px)',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
         },
       },
     },
@@ -32,14 +59,14 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           textTransform: 'none',
-          borderRadius: 8,
+          borderRadius: 10,
         },
       },
     },
     MuiTableHead: {
       styleOverrides: {
         root: {
-          backgroundColor: '#f4f6f8',
+          backgroundColor: 'rgba(255, 255, 255, 0.06)',
         },
       },
     },

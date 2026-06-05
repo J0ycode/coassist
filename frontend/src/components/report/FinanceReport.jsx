@@ -88,7 +88,7 @@ const FinanceReport = () => {
             <Typography variant="h6" fontWeight="bold" mb={2}>Income vs Expenses Comparison</Typography>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={barData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255, 255, 255, 0.08)" />
                 <XAxis dataKey="month" />
                 <YAxis />
                 <RechartsTooltip cursor={{ fill: 'rgba(0,0,0,0.04)' }} />

@@ -327,7 +327,7 @@ const Home = () => {
                     <stop offset="95%" stopColor={C.temperature} stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255, 255, 255, 0.08)" />
                 <XAxis dataKey="date" tick={{ fontSize: 11 }} />
                 <YAxis tick={{ fontSize: 11 }} />
                 <RechartsTooltip content={<CustomTooltip />} />
@@ -355,7 +355,7 @@ const Home = () => {
               <XAxis type="number" tick={{ fontSize: 11 }} allowDecimals={false} />
               <YAxis dataKey="name" type="category" tick={{ fontSize: 12 }} width={64} />
               <RechartsTooltip content={<CustomTooltip />} />
-              <Bar dataKey="value" radius={[0, 6, 6, 0]} label={{ position: 'right', fontSize: 12, fill: '#666' }}>
+              <Bar dataKey="value" radius={[0, 6, 6, 0]} label={{ position: 'right', fontSize: 12, fill: '#fff' }}>
                 {bpBarData.map((entry, i) => (
                   <Cell key={i} fill={entry.fill} />
                 ))}
@@ -376,7 +376,7 @@ const Home = () => {
           <SectionHeader title="Finance Overview" sub="Income · Expenses · Balance" />
           <ResponsiveContainer width="100%" height={180}>
             <BarChart data={summaryBars} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255, 255, 255, 0.08)" />
               <XAxis dataKey="name" tick={{ fontSize: 12 }} />
               <YAxis tick={{ fontSize: 11 }} tickFormatter={v => `₹${(v/1000).toFixed(0)}k`} />
               <RechartsTooltip

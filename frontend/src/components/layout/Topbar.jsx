@@ -29,22 +29,26 @@ const Topbar = () => {
   return (
     <AppBar
       position="sticky"
-      color="inherit"
+      color="transparent"
       elevation={0}
-      sx={{ borderBottom: '1px solid #e0e0e0' }}
+      sx={{
+        borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+        backdropFilter: 'blur(20px)',
+        backgroundColor: 'rgba(15, 12, 41, 0.3)',
+      }}
     >
       <Toolbar sx={{ justifyContent: 'space-between' }}>
         <Box>
-          <Typography variant="h6" fontWeight="bold">{pageName}</Typography>
+          <Typography variant="h6" fontWeight="bold" sx={{ color: '#fff' }}>{pageName}</Typography>
           {user && (
-            <Typography variant="caption" color="text.secondary">
+            <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.5)' }}>
               Hello, {user.username} 👋
             </Typography>
           )}
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <IconButton><SearchIcon /></IconButton>
-          <IconButton><NotificationsNoneIcon /></IconButton>
+          <IconButton sx={{ color: 'rgba(255, 255, 255, 0.7)' }}><SearchIcon /></IconButton>
+          <IconButton sx={{ color: 'rgba(255, 255, 255, 0.7)' }}><NotificationsNoneIcon /></IconButton>
           <Avatar sx={{
             bgcolor: 'primary.main', ml: 1,
             width: 36, height: 36,
@@ -54,7 +58,7 @@ const Topbar = () => {
             {initials}
           </Avatar>
           {user && (
-            <Typography variant="body2" sx={{ ml: 0.5, color: 'text.secondary', display: { xs: 'none', sm: 'block' } }}>
+            <Typography variant="body2" sx={{ ml: 0.5, color: 'rgba(255, 255, 255, 0.8)', display: { xs: 'none', sm: 'block' } }}>
               {user.username}
             </Typography>
           )}
@@ -63,7 +67,7 @@ const Topbar = () => {
               id="logout-btn"
               onClick={handleLogout}
               size="small"
-              sx={{ ml: 0.5, color: 'text.secondary', '&:hover': { color: 'error.main' } }}
+              sx={{ ml: 0.5, color: 'rgba(255, 255, 255, 0.6)', '&:hover': { color: 'error.main' } }}
             >
               <LogoutIcon fontSize="small" />
             </IconButton>

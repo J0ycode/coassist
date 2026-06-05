@@ -36,19 +36,20 @@ const Sidebar = () => {
       height: '100vh',
       position: 'fixed',
       top: 0, left: 0,
-      backgroundColor: '#ffffff',
-      borderRight: '1px solid #e0e0e0',
+      backgroundColor: 'rgba(255, 255, 255, 0.03)',
+      backdropFilter: 'blur(20px)',
+      borderRight: '1px solid rgba(255, 255, 255, 0.08)',
       display: 'flex',
       flexDirection: 'column',
     }}>
       {/* Logo */}
       <Box sx={{ pt: 2.5, pb: 2, px: 3 }}>
-        <Typography variant="h6" color="primary" fontWeight="bold">
+        <Typography variant="h6" sx={{ color: '#fff', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1 }}>
           💊 VitaLedger
         </Typography>
       </Box>
 
-      <Divider />
+      <Divider sx={{ borderColor: 'rgba(255, 255, 255, 0.08)' }} />
 
       {/* Nav Items */}
       <List sx={{ px: 2, flexGrow: 1, pt: 1.5 }}>
@@ -60,14 +61,14 @@ const Sidebar = () => {
               onClick={() => navigate(item.path)}
               sx={{
                 borderRadius: 2, mb: 1,
-                backgroundColor: active ? 'rgba(92, 107, 192, 0.08)' : 'transparent',
-                color: active ? 'primary.main' : 'text.primary',
+                backgroundColor: active ? 'rgba(255, 255, 255, 0.08)' : 'transparent',
+                color: active ? '#fff' : 'rgba(255, 255, 255, 0.7)',
                 '&:hover': {
-                  backgroundColor: active ? 'rgba(92, 107, 192, 0.12)' : 'rgba(0,0,0,0.04)',
+                  backgroundColor: active ? 'rgba(255, 255, 255, 0.12)' : 'rgba(255, 255, 255, 0.04)',
                 },
               }}
             >
-              <ListItemIcon sx={{ color: active ? 'primary.main' : 'inherit', minWidth: 40 }}>
+              <ListItemIcon sx={{ color: active ? '#42a5f5' : 'rgba(255, 255, 255, 0.6)', minWidth: 40 }}>
                 {item.icon}
               </ListItemIcon>
               <ListItemText
@@ -80,7 +81,7 @@ const Sidebar = () => {
       </List>
 
       {/* User section at bottom */}
-      <Divider />
+      <Divider sx={{ borderColor: 'rgba(255, 255, 255, 0.08)' }} />
       <Box sx={{
         p: 2,
         display: 'flex',
@@ -95,10 +96,10 @@ const Sidebar = () => {
           {initials}
         </Avatar>
         <Box sx={{ flex: 1, overflow: 'hidden' }}>
-          <Typography variant="body2" fontWeight="bold" noWrap>
+          <Typography variant="body2" fontWeight="bold" sx={{ color: '#fff' }} noWrap>
             {user?.username || 'User'}
           </Typography>
-          <Typography variant="caption" color="text.secondary">
+          <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.5)' }}>
             Signed in
           </Typography>
         </Box>
@@ -106,7 +107,7 @@ const Sidebar = () => {
           <IconButton
             size="small"
             onClick={handleLogout}
-            sx={{ color: 'text.secondary', '&:hover': { color: 'error.main' } }}
+            sx={{ color: 'rgba(255, 255, 255, 0.6)', '&:hover': { color: 'error.main' } }}
           >
             <LogoutIcon fontSize="small" />
           </IconButton>
