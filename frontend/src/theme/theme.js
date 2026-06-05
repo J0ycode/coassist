@@ -7,7 +7,7 @@ const theme = createTheme({
     secondary: { main: '#26c6da' },
     background: {
       default: '#0f0c29',
-      paper: '#18163c',
+      paper: 'rgba(255, 255, 255, 0.05)',
     },
     text: {
       primary: '#ffffff',
@@ -38,10 +38,10 @@ const theme = createTheme({
     MuiCard: {
       styleOverrides: {
         root: {
-          backgroundColor: '#18163c',
+          backgroundColor: 'rgba(255, 255, 255, 0.05)',
           backdropFilter: 'blur(20px)',
-          border: '1px solid rgba(255, 255, 255, 0.08)',
-          boxShadow: '0 24px 80px rgba(0,0,0,0.3)',
+          border: '1px solid rgba(255, 255, 255, 0.12)',
+          boxShadow: '0 24px 80px rgba(0,0,0,0.4)',
           borderRadius: 16,
         },
       },
@@ -49,9 +49,9 @@ const theme = createTheme({
     MuiPaper: {
       styleOverrides: {
         root: {
-          backgroundColor: '#18163c',
+          backgroundColor: 'rgba(255, 255, 255, 0.05)',
           backdropFilter: 'blur(20px)',
-          border: '1px solid rgba(255, 255, 255, 0.08)',
+          border: '1px solid rgba(255, 255, 255, 0.12)',
           borderRadius: 16,
         },
       },
@@ -59,7 +59,7 @@ const theme = createTheme({
     MuiAppBar: {
       styleOverrides: {
         root: {
-          backgroundColor: '#121030',
+          backgroundColor: 'rgba(15, 12, 41, 0.3)',
           backdropFilter: 'blur(20px)',
           borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
         },
