@@ -762,41 +762,60 @@ const Home = () => {
                   </Table>
                 </TableContainer>
               ) : (
-                <Box sx={{ border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: 2, p: 2, bgcolor: 'rgba(255,255,255,0.01)', height: 350, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                <Box sx={{ border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: 2, p: 2, bgcolor: 'rgba(255,255,255,0.01)', height: 350, display: 'flex', flexDirection: 'column' }}>
                   {healthChartData.length === 0 ? (
-                    <Typography align="center" color="text.secondary">No health records to plot</Typography>
+                    <Typography align="center" color="text.secondary" sx={{ my: 'auto' }}>No health records to plot</Typography>
                   ) : (
-                    <ResponsiveContainer width="100%" height="100%">
-                      <AreaChart data={healthChartData} margin={{ top: 10, right: 10, left: -20, bottom: 5 }}>
-                        <defs>
-                          <linearGradient id="compSys" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%"  stopColor={C.systolic}    stopOpacity={0.25} />
-                            <stop offset="95%" stopColor={C.systolic}    stopOpacity={0} />
-                          </linearGradient>
-                          <linearGradient id="compDia" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%"  stopColor={C.diastolic}   stopOpacity={0.25} />
-                            <stop offset="95%" stopColor={C.diastolic}   stopOpacity={0} />
-                          </linearGradient>
-                          <linearGradient id="compSpo2" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%"  stopColor={C.spO2}        stopOpacity={0.2} />
-                            <stop offset="95%" stopColor={C.spO2}        stopOpacity={0} />
-                          </linearGradient>
-                          <linearGradient id="compTemp" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%"  stopColor={C.temperature} stopOpacity={0.2} />
-                            <stop offset="95%" stopColor={C.temperature} stopOpacity={0} />
-                          </linearGradient>
-                        </defs>
-                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255, 255, 255, 0.08)" />
-                        <XAxis dataKey="formattedDate" tick={{ fontSize: 9 }} />
-                        <YAxis tick={{ fontSize: 10 }} />
-                        <RechartsTooltip content={<CustomTooltip />} />
-                        <Legend wrapperStyle={{ fontSize: 11 }} />
-                        <Area type="monotone" name="Systolic" dataKey="Systolic" stroke={C.systolic} fill="url(#compSys)" strokeWidth={2} dot={{ r: 2 }} activeDot={{ r: 4 }} />
-                        <Area type="monotone" name="Diastolic" dataKey="Diastolic" stroke={C.diastolic} fill="url(#compDia)" strokeWidth={2} dot={{ r: 2 }} activeDot={{ r: 4 }} />
-                        <Area type="monotone" name="SpO2" dataKey="SpO2" stroke={C.spO2} fill="url(#compSpo2)" strokeWidth={2} dot={{ r: 2 }} activeDot={{ r: 4 }} />
-                        <Area type="monotone" name="Temperature" dataKey="Temp" stroke={C.temperature} fill="url(#compTemp)" strokeWidth={2} dot={{ r: 2 }} activeDot={{ r: 4 }} />
-                      </AreaChart>
-                    </ResponsiveContainer>
+                    <>
+                      <Box sx={{ flexGrow: 1, minHeight: 0 }}>
+                        <ResponsiveContainer width="100%" height="100%">
+                          <AreaChart data={healthChartData} margin={{ top: 10, right: 10, left: -20, bottom: 5 }}>
+                            <defs>
+                              <linearGradient id="compSys" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="5%"  stopColor={C.systolic}    stopOpacity={0.25} />
+                                <stop offset="95%" stopColor={C.systolic}    stopOpacity={0} />
+                              </linearGradient>
+                              <linearGradient id="compDia" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="5%"  stopColor={C.diastolic}   stopOpacity={0.25} />
+                                <stop offset="95%" stopColor={C.diastolic}   stopOpacity={0} />
+                              </linearGradient>
+                              <linearGradient id="compSpo2" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="5%"  stopColor={C.spO2}        stopOpacity={0.2} />
+                                <stop offset="95%" stopColor={C.spO2}        stopOpacity={0} />
+                              </linearGradient>
+                              <linearGradient id="compTemp" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="5%"  stopColor={C.temperature} stopOpacity={0.2} />
+                                <stop offset="95%" stopColor={C.temperature} stopOpacity={0} />
+                              </linearGradient>
+                            </defs>
+                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255, 255, 255, 0.08)" />
+                            <XAxis dataKey="formattedDate" tick={{ fontSize: 9 }} />
+                            <YAxis tick={{ fontSize: 10 }} />
+                            <RechartsTooltip content={<CustomTooltip />} />
+                            <Area type="monotone" name="Systolic" dataKey="Systolic" stroke={C.systolic} fill="url(#compSys)" strokeWidth={2} dot={{ r: 2 }} activeDot={{ r: 4 }} />
+                            <Area type="monotone" name="Diastolic" dataKey="Diastolic" stroke={C.diastolic} fill="url(#compDia)" strokeWidth={2} dot={{ r: 2 }} activeDot={{ r: 4 }} />
+                            <Area type="monotone" name="SpO2" dataKey="SpO2" stroke={C.spO2} fill="url(#compSpo2)" strokeWidth={2} dot={{ r: 2 }} activeDot={{ r: 4 }} />
+                            <Area type="monotone" name="Temperature" dataKey="Temp" stroke={C.temperature} fill="url(#compTemp)" strokeWidth={2} dot={{ r: 2 }} activeDot={{ r: 4 }} />
+                          </AreaChart>
+                        </ResponsiveContainer>
+                      </Box>
+                      {/* Hint / Legend */}
+                      <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap', mt: 1, pt: 1, borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                        {[
+                          { label: 'Systolic BP', color: C.systolic },
+                          { label: 'Diastolic BP', color: C.diastolic },
+                          { label: 'Blood Oxygen (SpO2)', color: C.spO2 },
+                          { label: 'Temperature', color: C.temperature },
+                        ].map((hint, i) => (
+                          <Box key={i} sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                            <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: hint.color }} />
+                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.7rem' }}>
+                              {hint.label}
+                            </Typography>
+                          </Box>
+                        ))}
+                      </Box>
+                    </>
                   )}
                 </Box>
               )}
@@ -901,23 +920,34 @@ const Home = () => {
                   </Table>
                 </TableContainer>
               ) : (
-                <Box sx={{ border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: 2, p: 2, bgcolor: 'rgba(255,255,255,0.01)', height: 350, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                <Box sx={{ border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: 2, p: 2, bgcolor: 'rgba(255,255,255,0.01)', height: 350, display: 'flex', flexDirection: 'column' }}>
                   {expenseChartData.length === 0 ? (
-                    <Typography align="center" color="text.secondary">No expenses to plot</Typography>
+                    <Typography align="center" color="text.secondary" sx={{ my: 'auto' }}>No expenses to plot</Typography>
                   ) : (
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={expenseChartData} margin={{ top: 10, right: 10, left: -10, bottom: 5 }}>
-                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255, 255, 255, 0.08)" />
-                        <XAxis dataKey="formattedDate" tick={{ fontSize: 9 }} />
-                        <YAxis tick={{ fontSize: 10 }} tickFormatter={v => `₹${v}`} />
-                        <RechartsTooltip content={<CustomTooltip />} />
-                        <Bar name="Expense Amount" dataKey="Amount" fill={C.expense} radius={[4, 4, 0, 0]} maxBarSize={40}>
-                          {expenseChartData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={C.pie[index % C.pie.length]} />
-                          ))}
-                        </Bar>
-                      </BarChart>
-                    </ResponsiveContainer>
+                    <>
+                      <Box sx={{ flexGrow: 1, minHeight: 0 }}>
+                        <ResponsiveContainer width="100%" height="100%">
+                          <BarChart data={expenseChartData} margin={{ top: 10, right: 10, left: -10, bottom: 5 }}>
+                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255, 255, 255, 0.08)" />
+                            <XAxis dataKey="formattedDate" tick={{ fontSize: 9 }} />
+                            <YAxis tick={{ fontSize: 10 }} tickFormatter={v => `₹${v}`} />
+                            <RechartsTooltip content={<CustomTooltip />} />
+                            <Bar name="Expense Amount" dataKey="Amount" fill={C.expense} radius={[4, 4, 0, 0]} maxBarSize={40}>
+                              {expenseChartData.map((entry, index) => (
+                                <Cell key={`cell-${index}`} fill={C.pie[index % C.pie.length]} />
+                              ))}
+                            </Bar>
+                          </BarChart>
+                        </ResponsiveContainer>
+                      </Box>
+                      {/* Hint / Legend */}
+                      <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center', alignItems: 'center', mt: 1, pt: 1, borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                        <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#42a5f5' }} />
+                        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.7rem' }}>
+                          Each colored bar represents an individual expense amount. Hover to see Category & Description.
+                        </Typography>
+                      </Box>
+                    </>
                   )}
                 </Box>
               )}
