@@ -1,12 +1,16 @@
 const express = require('express')
 const router = express.Router()
 const HealthRecord = require('../models/HealthRecord')
+const authMiddleware = require('../middleware/authMiddleware')
+
+router.use(authMiddleware)
 
 // POST / — save new health record
 router.post('/', async (req, res) => {
   try {
     const { systolic, diastolic, temperature, bloodOxygen, note } = req.body
     const record = new HealthRecord({
+      user: req.user.id,
       bloodPressure: { systolic, diastolic },
       temperature,
       bloodOxygen,
@@ -23,7 +27,7 @@ router.post('/', async (req, res) => {
 // GET / — get all records sorted by date descending
 router.get('/', async (req, res) => {
   try {
-    const records = await HealthRecord.find().sort({ date: -1 })
+    const records = await HealthRecord.find({ user: req.user.id }).sort({ date: -1 })
     res.json(records)
   } catch (err) {
     console.error(err)
@@ -34,7 +38,8 @@ router.get('/', async (req, res) => {
 // DELETE /:id — delete a record by id
 router.delete('/:id', async (req, res) => {
   try {
-    await HealthRecord.findByIdAndDelete(req.params.id)
+    const deleted = await HealthRecord.findOneAndDelete({ _id: req.params.id, user: req.user.id })
+    if (!deleted) return res.status(404).json({ message: 'Record not found or unauthorized' })
     res.json({ message: 'Record deleted' })
   } catch (err) {
     console.error(err)
@@ -45,7 +50,7 @@ router.delete('/:id', async (req, res) => {
 // GET /report — aggregated health stats
 router.get('/report', async (req, res) => {
   try {
-    const records = await HealthRecord.find()
+    const records = await HealthRecord.find({ user: req.user.id })
     const totalRecords = records.length
 
     if (totalRecords === 0) {

@@ -1,12 +1,15 @@
 const express = require('express')
 const router = express.Router()
 const Transaction = require('../models/Transaction')
+const authMiddleware = require('../middleware/authMiddleware')
+
+router.use(authMiddleware)
 
 // POST / — save new transaction
 router.post('/', async (req, res) => {
   try {
     const { type, category, amount, description } = req.body
-    const transaction = new Transaction({ type, category, amount, description })
+    const transaction = new Transaction({ user: req.user.id, type, category, amount, description })
     const saved = await transaction.save()
     res.status(201).json(saved)
   } catch (err) {
@@ -18,7 +21,7 @@ router.post('/', async (req, res) => {
 // GET / — get all transactions sorted by date descending
 router.get('/', async (req, res) => {
   try {
-    const transactions = await Transaction.find().sort({ date: -1 })
+    const transactions = await Transaction.find({ user: req.user.id }).sort({ date: -1 })
     res.json(transactions)
   } catch (err) {
     console.error(err)
@@ -29,7 +32,8 @@ router.get('/', async (req, res) => {
 // DELETE /:id — delete a transaction
 router.delete('/:id', async (req, res) => {
   try {
-    await Transaction.findByIdAndDelete(req.params.id)
+    const deleted = await Transaction.findOneAndDelete({ _id: req.params.id, user: req.user.id })
+    if (!deleted) return res.status(404).json({ message: 'Transaction not found or unauthorized' })
     res.json({ message: 'Transaction deleted' })
   } catch (err) {
     console.error(err)
@@ -40,7 +44,7 @@ router.delete('/:id', async (req, res) => {
 // GET /report — aggregated finance stats
 router.get('/report', async (req, res) => {
   try {
-    const transactions = await Transaction.find()
+    const transactions = await Transaction.find({ user: req.user.id })
 
     const totalIncome = transactions
       .filter(t => t.type === 'income')
