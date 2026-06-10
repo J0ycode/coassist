@@ -29,6 +29,15 @@ Coassist is a modern, responsive, and secure full-stack web application designed
 
 ---
 
+## 👥 Demo Credentials
+
+To test the application without creating a new account, you can use the following pre-configured demo credentials:
+
+*   **Username:** `demo_user`
+*   **Password:** `password123`
+
+---
+
 ## 🛠️ Technology Stack
 
 | Layer | Technology Used |
