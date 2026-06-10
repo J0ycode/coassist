@@ -307,10 +307,10 @@ const Home = () => {
     }
   })
 
-  /* ── sorted expense data ── */
-  const expenseTransactions = transactions.filter(t => t.type === 'expense')
+  /* ── sorted finance data (income & expense) ── */
+  const financeTransactions = transactions
 
-  const sortedExpenseData = [...expenseTransactions].sort((a, b) => {
+  const sortedExpenseData = [...financeTransactions].sort((a, b) => {
     let valA, valB;
     if (expenseSortField === 'date') {
       valA = new Date(a.date).getTime()
@@ -324,6 +324,9 @@ const Home = () => {
     } else if (expenseSortField === 'description') {
       valA = (a.description ?? '').toLowerCase()
       valB = (b.description ?? '').toLowerCase()
+    } else if (expenseSortField === 'type') {
+      valA = (a.type ?? '').toLowerCase()
+      valB = (b.type ?? '').toLowerCase()
     } else {
       valA = 0
       valB = 0
@@ -354,6 +357,8 @@ const Home = () => {
     return {
       ...t,
       formattedDate: `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')} ${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`,
+      Income: t.type === 'income' ? t.amount : 0,
+      Expense: t.type === 'expense' ? t.amount : 0,
       Amount: t.amount,
     }
   })
@@ -821,13 +826,13 @@ const Home = () => {
               )}
             </Grid>
 
-            {/* Right Column: Expense Recordings */}
+            {/* Right Column: Finance Recordings */}
             <Grid item xs={12} md={6}>
               <Box sx={{ mb: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Typography variant="subtitle1" fontWeight="bold" sx={{ color: '#ffa726', display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <AccountBalanceWalletIcon fontSize="small" /> Expense Records Log {viewMode === 'chart' && 'Chart'}
+                  <AccountBalanceWalletIcon fontSize="small" /> Income & Expense Log {viewMode === 'chart' && 'Chart'}
                 </Typography>
-                <Chip label={`${expenseTransactions.length} expenses`} size="small" sx={{ bgcolor: 'rgba(255,167,38,0.15)', color: '#fff', fontWeight: 600 }} />
+                <Chip label={`${financeTransactions.length} records`} size="small" sx={{ bgcolor: 'rgba(255,167,38,0.15)', color: '#fff', fontWeight: 600 }} />
               </Box>
 
               {viewMode === 'table' ? (
@@ -846,6 +851,19 @@ const Home = () => {
                             }}
                           >
                             Date
+                          </TableSortLabel>
+                        </TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', color: 'rgba(255,255,255,0.9)', bgcolor: 'rgba(30, 30, 50, 0.95)' }}>
+                          <TableSortLabel
+                            active={expenseSortField === 'type'}
+                            direction={expenseSortField === 'type' ? expenseSortOrder : 'asc'}
+                            onClick={() => handleExpenseSort('type')}
+                            sx={{
+                              color: 'rgba(255,255,255,0.9) !important',
+                              '& .MuiTableSortLabel-icon': { color: '#42a5f5 !important' }
+                            }}
+                          >
+                            Type
                           </TableSortLabel>
                         </TableCell>
                         <TableCell align="right" sx={{ fontWeight: 'bold', color: 'rgba(255,255,255,0.9)', bgcolor: 'rgba(30, 30, 50, 0.95)' }}>
@@ -892,24 +910,34 @@ const Home = () => {
                     <TableBody>
                       {sortedExpenseData.length === 0 ? (
                         <TableRow>
-                          <TableCell colSpan={4} align="center" sx={{ py: 4 }}>
-                            <Typography variant="body2" color="text.secondary">No expense transactions yet</Typography>
+                          <TableCell colSpan={5} align="center" sx={{ py: 4 }}>
+                            <Typography variant="body2" color="text.secondary">No finance records yet</Typography>
                           </TableCell>
                         </TableRow>
                       ) : (
                         sortedExpenseData.map((row) => {
                           const d = new Date(row.date)
                           const formattedDate = `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')} ${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`
+                          const isInc = row.type === 'income'
                           return (
                             <TableRow key={row._id} hover sx={{ '&:hover': { bgcolor: 'rgba(255,255,255,0.04) !important' } }}>
                               <TableCell sx={{ fontSize: '0.8rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>{formattedDate}</TableCell>
-                              <TableCell align="right" sx={{ fontSize: '0.8rem', fontWeight: 600, color: C.expense, borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                                ₹{row.amount.toLocaleString()}
+                              <TableCell sx={{ fontSize: '0.8rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                                <Chip 
+                                  label={isInc ? 'Income' : 'Expense'} 
+                                  size="small" 
+                                  variant="outlined" 
+                                  color={isInc ? 'success' : 'error'}
+                                  sx={{ height: 20, fontSize: '0.65rem', fontWeight: 'bold' }} 
+                                />
+                              </TableCell>
+                              <TableCell align="right" sx={{ fontSize: '0.8rem', fontWeight: 600, color: isInc ? C.income : C.expense, borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                                {isInc ? '+' : '-'} ₹{row.amount.toLocaleString()}
                               </TableCell>
                               <TableCell sx={{ fontSize: '0.8rem', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                                 <Chip label={row.category} size="small" variant="outlined" sx={{ height: 20, fontSize: '0.7rem', borderColor: 'rgba(255,255,255,0.2)', color: 'rgba(255,255,255,0.8)' }} />
                               </TableCell>
-                              <TableCell sx={{ fontSize: '0.8rem', maxWidth: 150, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                              <TableCell sx={{ fontSize: '0.8rem', maxWidth: 120, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                                 {row.description || '-'}
                               </TableCell>
                             </TableRow>
@@ -922,7 +950,7 @@ const Home = () => {
               ) : (
                 <Box sx={{ border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: 2, p: 2, bgcolor: 'rgba(255,255,255,0.01)', height: 350, display: 'flex', flexDirection: 'column' }}>
                   {expenseChartData.length === 0 ? (
-                    <Typography align="center" color="text.secondary" sx={{ my: 'auto' }}>No expenses to plot</Typography>
+                    <Typography align="center" color="text.secondary" sx={{ my: 'auto' }}>No finance records to plot</Typography>
                   ) : (
                     <>
                       <Box sx={{ flexGrow: 1, minHeight: 0 }}>
@@ -932,20 +960,25 @@ const Home = () => {
                             <XAxis dataKey="formattedDate" tick={{ fontSize: 9 }} />
                             <YAxis tick={{ fontSize: 10 }} tickFormatter={v => `₹${v}`} />
                             <RechartsTooltip content={<CustomTooltip />} />
-                            <Bar name="Expense Amount" dataKey="Amount" fill={C.expense} radius={[4, 4, 0, 0]} maxBarSize={40}>
-                              {expenseChartData.map((entry, index) => (
-                                <Cell key={`cell-${index}`} fill={C.pie[index % C.pie.length]} />
-                              ))}
-                            </Bar>
+                            <Legend wrapperStyle={{ fontSize: 11 }} />
+                            <Bar name="Income" dataKey="Income" fill={C.income} radius={[4, 4, 0, 0]} maxBarSize={25} />
+                            <Bar name="Expense" dataKey="Expense" fill={C.expense} radius={[4, 4, 0, 0]} maxBarSize={25} />
                           </BarChart>
                         </ResponsiveContainer>
                       </Box>
                       {/* Hint / Legend */}
-                      <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center', alignItems: 'center', mt: 1, pt: 1, borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-                        <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#42a5f5' }} />
-                        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.7rem' }}>
-                          Each colored bar represents an individual expense amount. Hover to see Category & Description.
-                        </Typography>
+                      <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', alignItems: 'center', mt: 1, pt: 1, borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                        {[
+                          { label: 'Income', color: C.income },
+                          { label: 'Expense', color: C.expense },
+                        ].map((hint, i) => (
+                          <Box key={i} sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                            <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: hint.color }} />
+                            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.7rem' }}>
+                              {hint.label}
+                            </Typography>
+                          </Box>
+                        ))}
                       </Box>
                     </>
                   )}
